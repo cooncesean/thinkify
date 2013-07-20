@@ -1,0 +1,5 @@
+* 0.1.1
+    * Cleanup of README and documentation for PyPi.
+* 0.1.0
+    * Initial rev with functionality to obtain a connection to a 
+      Thinkify Reader and issue commands/receive responses.
