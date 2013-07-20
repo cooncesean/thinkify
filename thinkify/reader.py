@@ -19,7 +19,7 @@ class ThinkifyReader(object):
         <epc_id_2>
         ....
     """
-    def __init__(self, port, baudrate=115200):
+    def __init__(self, port, baudrate=115200, tag_id_prefix=None):
         """
         Initalizes an connection to a connected (via USB) ThinkifyReader
         TR-200 and abstracts common commands to get and set data to/from the
@@ -33,9 +33,15 @@ class ThinkifyReader(object):
 
             @baudrate (int) => An optional argument allowing one to override
             the default `115200`.
+
+            @tag_id_prefix (str) => Optional string prefix for similar tags.
+            It allows the developer to parse the `epc_id` when  instantiating
+            new `Tag` objects and provides access to the truncated Tag id using
+            the `Tag.trunc_id` property.
         """
         self.port = port
         self.baudrate = baudrate
+        self.tag_id_prefix = tag_id_prefix
         self.serial = serial.Serial(port, baudrate)
 
     def _format_response(self, response):
@@ -107,6 +113,7 @@ class ThinkifyReader(object):
                         tag_parts[4],           # Q magnitude
                         tag_parts[5],           # Decoded
                         tag_parts[6],           # Timestamp of read
+                        self.tag_id_prefix,
                     )
                 tag_list.append(t)
         return tag_list

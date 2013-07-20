@@ -1,3 +1,8 @@
+* 0.1.8
+	* Allowing a new optional argument, `tag_id_prefix` to the `TagReader`
+	  and `Tag` __init__ methods, which allows developers to parse similar
+	  tag ids using the prefix and access a truncated version of a tag's id
+	  using the Tag.trunc_id property.
 * 0.1.7
 	* Added a new method `ThinkifyReader.get_closest_tag()` to fetch the
 	  closet available tag to the reader.
