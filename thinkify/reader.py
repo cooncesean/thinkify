@@ -4,12 +4,7 @@ import time
 
 class ThinkifyReader(object):
     """
-    Abstraction of the Thinkify TR-200 physical RFID Reader.
-
-    The Reader has two modes: Synchronous (command-response) and Streaming
-        * Synchronous: Allows the user to issue commands one at a time.
-        * Streaming: The streaming interface is used when the reader is
-        spinning looking for tags to act on.
+    Wrapper for the Thinkify TR-200 RFID Reader API.
 
     Usage:
         >>> from thinkify.reader import ThinkifyReader
@@ -110,6 +105,11 @@ class ThinkifyReader(object):
                     )
                 tag_list.append(t)
         return tag_list
+
+    def get_continous_tags(self):
+        response = self._issue_command('t1')
+        response = self._format_response(response)
+        print response
 
     # AMPLIFIER (ANTENNA) METHODS ############################################
     # Used to set and get the parameters tha control the characteristics of
