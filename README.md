@@ -1,4 +1,4 @@
-# Thinkify Python Library
+# The Thinkify Python Library
 This library is a Python wrapper for [Thinkify's](http://www.thinkifyit.com) Thinkify Reader Protocol. It allows developers to issue commands to their RFID readers as well as retreive data from them.
 
 ## Installation
@@ -22,7 +22,7 @@ $ sudo python setup.py install
 
 ## Usage
 
-```
+```python
 >>> from thinkify.reader import ThinkifyReader
 >>> reader = ThinkifyReader('/dev/tty.usbmodem1411')
 
