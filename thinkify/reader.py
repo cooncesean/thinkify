@@ -27,11 +27,12 @@ class ThinkifyReader(object):
 
         Params:
             @port (str) => The path to the modem on disk. On a Mac/Linux
-                    this should be somewhere in /dev/, typically the
-                    path is: `/dev/tty.usbmodem1411` but can vary based
-                    on your configuration.
+            this should be somewhere in /dev/, typically the
+            path is: `/dev/tty.usbmodem1411` but can vary based
+            on your configuration.
+
             @baudrate (int) => An optional argument allowing one to override
-                    the default `115200`.
+            the default `115200`.
         """
         self.port = port
         self.baudrate = baudrate
@@ -108,11 +109,6 @@ class ThinkifyReader(object):
                 tag_list.append(t)
         return tag_list
 
-    def get_continous_tags(self):
-        response = self._issue_command('t1')
-        response = self._format_response(response)
-        print response
-
     # AMPLIFIER (ANTENNA) METHODS ############################################
     # Used to set and get the parameters tha control the characteristics of
     # the amplifier in the base band receiver.
@@ -125,9 +121,11 @@ class ThinkifyReader(object):
     def set_amplifier_gain(self, gain_code):
         """
         Sets the amplifier's gain on the antenna.
+
+        Params:
             @gain_code (int) => The id of the gain you want to tune the
-                    antenna to. The list of valid gain codes can be found
-                    in `view_gain_codes()`.
+            antenna to. The list of valid gain codes can be found in 
+            `view_gain_codes()`.
         """
         if gain_code not in range(0, 6):
             raise Exception("""
@@ -153,8 +151,10 @@ class ThinkifyReader(object):
     def set_amplifier_mixer_amplification_control(self, value):
         """
         Toggle the device's 10dB mixer amplifcation control.
+
+        Params:
             @value (bool) => Toggle value. True turns the mixer amp on
-                    while False turns it off.
+            while False turns it off.
         """
         self.serial.write('am%d\r' % (value and 1 or 0))
 
