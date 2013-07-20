@@ -9,7 +9,7 @@ f.close()
 setup(
     name='thinkify',
     description='A Python wrapper for the Thinkify Reader Protocol.',
-    version='0.1.2',
+    version='0.1.3',
     author='Sean Coonce',
     author_email='cooncesean@gmail.com',
     packages=['thinkify',],
