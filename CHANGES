@@ -1,3 +1,7 @@
+* 0.1.5
+	* Replacing long_description in setup.py with a link to the GitHub repo.
+* 0.1.4
+	* New release b/c PyPi failed
 * 0.1.3
 	* Fixing a bug in setup.py with the README file pointer.
 * 0.1.2
