@@ -1,3 +1,6 @@
+* 0.1.2
+	* Removed the `ThinkifyReader.get_continuous_tags()` method and cleaned 
+	  up a few docstrings.
 * 0.1.1
     * Cleanup of README and documentation for PyPi.
 * 0.1.0
