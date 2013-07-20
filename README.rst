@@ -62,6 +62,7 @@ Handling Tag Prefixes
 A common case is to have a number of similar tags from the same manufacturer with the same prefix on them. To parse this prefix when reading tags, you may optionally pass the prefix as a named arg to the ThinkifyReader.__init__() method like so.
 
 .. code-block:: pycon
+
 	>>> reader = ThinkifyReader('/dev/tty.usbmodem1411', tag_id_prefix='SOME_PREFIX_STRING')
 	>>> tag = reader.get_closest_tag()
 	>>> tag.epc_id # The full id
