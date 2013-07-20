@@ -68,7 +68,7 @@ class ThinkifyReader(object):
     # These methods attempt to read tags using the current settings on the
     # device.
     ##########################################################################
-    def get_tags(self):
+    def get_tags(self, print_response=True):
         """
         Runs a single `ping` checking for any and all tags within the reader's
         read current range and returns a list of `Tag` objects with their
@@ -76,7 +76,8 @@ class ThinkifyReader(object):
         """
         response = self._issue_command('t')
         response = self._format_response(response)
-        print response
+        if print_response:
+            print response
 
         # Instantiate a list of Tag objects for each line of the response
         tag_list = []
@@ -85,11 +86,12 @@ class ThinkifyReader(object):
                 tag_list.append(Tag(response_line.replace('TAG=', '')))
         return tag_list
 
-    def get_tags_with_epc_data(self):
+    def get_tags_with_epc_data(self, print_response=True):
         " Similar to `get_tags()` but returns each Tag's entire `epc` data. "
         self._issue_command('ix1')
         response = self._issue_command('t')
-        print self._format_response(response)
+        if print_response:
+            print self._format_response(response)
         self._issue_command('ix0')
 
         # Instantiate a list of Tag objects

@@ -1,3 +1,5 @@
+* 0.1.6
+	* Printing the response in `get_tags()` is now optional.
 * 0.1.5
 	* Replacing long_description in setup.py with a link to the GitHub repo.
 * 0.1.4
