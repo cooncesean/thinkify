@@ -9,18 +9,21 @@ Installation
 To install the Thinkify python library using `pip<https://pypi.python.org/pypi/pip>`_:
 
 .. code-block:: bash
+
 	$ sudo pip install thinkify
 
 
 or alternatively via easy_install:
 
 .. code-block:: bash
+
 	$ sudo easy_install thinkify
 
 
 or from source:
 
 .. code-block:: bash
+
 	$ sudo python setup.py install
 
 
@@ -28,6 +31,7 @@ Usage
 ---------------
 
 .. code-block:: pycon
+
 	>>> from thinkify.reader import ThinkifyReader
 	>>> reader = ThinkifyReader('/dev/tty.usbmodem1411')
 
