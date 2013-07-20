@@ -1,12 +1,12 @@
 The Thinkify Python Library
 ========
 
-This library is a Python wrapper for `Thinkify's<http://www.thinkifyit.com>`_ Thinkify Reader Protocol. It allows developers to issue commands to their RFID readers as well as retreive data from them.
+This library is a Python wrapper for `Thinkify's <http://www.thinkifyit.com>`_ Thinkify Reader Protocol. It allows developers to issue commands to their RFID readers as well as retreive data from them.
 
 Installation
 ---------------
 
-To install the Thinkify python library using `pip<https://pypi.python.org/pypi/pip>`_:
+To install the Thinkify python library using `pip <https://pypi.python.org/pypi/pip>`_:
 
 .. code-block:: bash
 
@@ -54,7 +54,7 @@ Usage
 Notes
 ---------------
 
-This library covers about ~20% of the total functionality provided by the `Thinkify Reader Protocol<http://bit.ly/1dKFJ5x>`_ (TRP) - it basically covers what I currently need. If one feels inclined to add extended functionality, please fork!
+This library covers about ~20% of the total functionality provided by the `Thinkify Reader Protocol <http://bit.ly/1dKFJ5x>`_ (TRP) - it basically covers what I currently need. If one feels inclined to add extended functionality, please fork!
 
 Another small side note: Instead of using TRP's "T(x)" command which loops indefinitely looking for tag presence, my current workflow is to handle the looping logic in Python. This is because:
 
