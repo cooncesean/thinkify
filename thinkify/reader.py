@@ -10,12 +10,12 @@ class ThinkifyReader(object):
         >>> from thinkify.reader import ThinkifyReader
         >>> reader = ThinkifyReader('/dev/tty.usbmodem1411')
         >>> reader.get_version()
-            VERSION=2.2.3
+        VERSION=2.2.3
         >>> tag_list = reader.get_tags()
         >>> [tag.epc_id for tag in tag_list]
-            <epc_id_1>
-            <epc_id_2>
-            ....
+        <epc_id_1>
+        <epc_id_2>
+        ....
     """
     def __init__(self, port, baudrate=115200):
         """
