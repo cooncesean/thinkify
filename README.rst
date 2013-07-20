@@ -51,6 +51,25 @@ Usage
 	3000E2001021490
 	3000E2001021491
 
+	# Finding the closest Tag
+	>>> tag = reader.get_closest_tag()
+	>>> tag.signal_strength
+	23.9234987345
+
+Handling Tag Prefixes
+^^^^^^^^^^^^^^^^^
+
+A common case is to have a number of similar tags from the same manufacturer with the same prefix on them. To parse this prefix when reading tags, you may optionally pass the prefix as a named arg to the ThinkifyReader.__init__() method like so.
+
+.. code-block:: pycon
+	>>> reader = ThinkifyReader('/dev/tty.usbmodem1411', tag_id_prefix='SOME_PREFIX_STRING')
+	>>> tag = reader.get_closest_tag()
+	>>> tag.epc_id # The full id
+	SOME_PREFIX_STRING_000001
+
+	>>> tag.trunc_id
+	000001
+
 Notes
 ---------------
 

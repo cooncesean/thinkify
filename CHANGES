@@ -1,25 +1,25 @@
 * 0.1.8
-	* Allowing a new optional argument, `tag_id_prefix` to the `TagReader`
-	  and `Tag` __init__ methods, which allows developers to parse similar
-	  tag ids using the prefix and access a truncated version of a tag's id
-	  using the Tag.trunc_id property.
+    * Allowing a new optional argument, `tag_id_prefix` to the `TagReader`
+      and `Tag` __init__ methods, which allows developers to parse similar
+      tag ids using the prefix and access a truncated version of a tag's id
+      using the Tag.trunc_id property.
 * 0.1.7
-	* Added a new method `ThinkifyReader.get_closest_tag()` to fetch the
-	  closet available tag to the reader.
-	* Added the `Tag.signal_strength` property which calcs the Tag's
-	  strength at read time.
-	* Patched the Tag.__init__() api.
+    * Added a new method `ThinkifyReader.get_closest_tag()` to fetch the
+      closet available tag to the reader.
+    * Added the `Tag.signal_strength` property which calcs the Tag's
+      strength at read time.
+    * Patched the Tag.__init__() api.
 * 0.1.6
-	* Printing the response in `get_tags()` is now optional.
+    * Printing the response in `get_tags()` is now optional.
 * 0.1.5
-	* Replacing long_description in setup.py with a link to the GitHub repo.
+    * Replacing long_description in setup.py with a link to the GitHub repo.
 * 0.1.4
-	* New release b/c PyPi failed
+    * New release b/c PyPi failed
 * 0.1.3
-	* Fixing a bug in setup.py with the README file pointer.
+    * Fixing a bug in setup.py with the README file pointer.
 * 0.1.2
-	* Removed the `ThinkifyReader.get_continuous_tags()` method and cleaned
-	  up a few docstrings.
+    * Removed the `ThinkifyReader.get_continuous_tags()` method and cleaned
+      up a few docstrings.
 * 0.1.1
     * Cleanup of README and documentation for PyPi.
 * 0.1.0
