@@ -62,13 +62,13 @@ class ThinkifyReader(object):
     def get_version(self):
         " Returns the firmware version on the device. "
         response = self._issue_command('v')
-        print self._format_response(response)
+        return self._format_response(response)
 
     # TAG READING METHODS ####################################################
     # These methods attempt to read tags using the current settings on the
     # device.
     ##########################################################################
-    def get_tags(self, print_response=True):
+    def get_tags(self, print_response=False):
         """
         Runs a single `ping` checking for any and all tags within the reader's
         read current range and returns a list of `Tag` objects with their
@@ -86,7 +86,7 @@ class ThinkifyReader(object):
                 tag_list.append(Tag(response_line.replace('TAG=', '')))
         return tag_list
 
-    def get_tags_with_epc_data(self, print_response=True):
+    def get_tags_with_epc_data(self, print_response=False):
         " Similar to `get_tags()` but returns each Tag's entire `epc` data. "
         self._issue_command('ix1')
         response = self._issue_command('t')
@@ -100,16 +100,24 @@ class ThinkifyReader(object):
             if response_line.startswith('TAG='):
                 tag_parts = response_line.replace('TAG=', '').split(' ')
                 t = Tag(
-                        tag_parts[0],
-                        int(tag_parts[1]),
-                        int(tag_parts[2]),
-                        int(tag_parts[3]),
-                        tag_parts[4],
-                        tag_parts[5],
-                        tag_parts[6],
+                        tag_parts[0],           # Tag ID
+                        tag_parts[1],           # Frequency
+                        tag_parts[2],           # Slot
+                        tag_parts[3],           # I magnitude
+                        tag_parts[4],           # Q magnitude
+                        tag_parts[5],           # Decoded
+                        tag_parts[6],           # Timestamp of read
                     )
                 tag_list.append(t)
         return tag_list
+
+    def get_closest_tag(self):
+        " Return the closest Tag instance. "
+        tag_list = self.get_tags_with_epc_data()
+        if len(tag_list) >= 1:
+            tag_list.sort(key=lambda x: x.signal_strength, reverse=True)
+            return tag_list[0]
+        return None
 
     # AMPLIFIER (ANTENNA) METHODS ############################################
     # Used to set and get the parameters tha control the characteristics of
@@ -118,7 +126,7 @@ class ThinkifyReader(object):
     def get_amplifier_settings(self):
         " Returns the current amplifier settings on the antenna. "
         response = self._issue_command('a')
-        print self._format_response(response)
+        return self._format_response(response)
 
     def set_amplifier_gain(self, gain_code):
         """
@@ -126,7 +134,7 @@ class ThinkifyReader(object):
 
         Params:
             @gain_code (int) => The id of the gain you want to tune the
-            antenna to. The list of valid gain codes can be found in 
+            antenna to. The list of valid gain codes can be found in
             `view_gain_codes()`.
         """
         if gain_code not in range(0, 6):
@@ -170,4 +178,4 @@ class ThinkifyReader(object):
     def get_inventory_settings(self):
         " Return the current inventory settings on the device. "
         response = self._issue_command('i')
-        print self._format_response(response)
+        return self._format_response(response)
