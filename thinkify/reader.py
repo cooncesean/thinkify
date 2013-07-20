@@ -1,6 +1,8 @@
 import serial
 import time
 
+from thinkify.tag import Tag
+
 
 class ThinkifyReader(object):
     """
@@ -167,15 +169,3 @@ class ThinkifyReader(object):
         " Return the current inventory settings on the device. "
         response = self._issue_command('i')
         print self._format_response(response)
-
-class Tag(object):
-    " Model representation of a Tag object. "
-    def __init__(self, epc_id, frequency=None, slot=None, imag=None,
-                 qmag=None, decoded=None, timestamp=None):
-        self.epc_id = epc_id
-        self.frequency = frequency
-        self.slot = slot
-        self.imag = imag
-        self.qmag = qmag
-        self.decoded = decoded
-        self.timestamp = timestamp
