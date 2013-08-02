@@ -1,3 +1,8 @@
+* 0.1.9
+    * Adding a new ThinkifyReader method `get_most_recent_tag_indefinitely`
+      which utilizes the API's `T6` command and loops indefinitely until a
+      valid tag is found (moving the looping logic to the reader (from
+      python) *should* be faster).
 * 0.1.8
     * Allowing a new optional argument, `tag_id_prefix` to the `TagReader`
       and `Tag` __init__ methods, which allows developers to parse similar
