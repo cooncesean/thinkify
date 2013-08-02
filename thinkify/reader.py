@@ -43,6 +43,7 @@ class ThinkifyReader(object):
         self.baudrate = baudrate
         self.tag_id_prefix = tag_id_prefix
         self.serial = serial.Serial(port, baudrate)
+        self.serial.flushInput()
 
     def _format_response(self, response):
         " Trim response cruft. "
@@ -59,7 +60,7 @@ class ThinkifyReader(object):
         self.serial.write('%s\r' % command)
 
         # Need to wait for just a bit to get a round trip response
-        time.sleep(.2)
+        time.sleep(.1)
 
         # Read and format the response from the device
         response = self.serial.read(self.serial.inWaiting())
@@ -80,6 +81,7 @@ class ThinkifyReader(object):
         read current range and returns a list of `Tag` objects with their
         respective epc_ids (tag ids).
         """
+        start = time.time()
         response = self._issue_command('t')
         response = self._format_response(response)
         if print_response:
@@ -90,6 +92,7 @@ class ThinkifyReader(object):
         for response_line in response.split('\r\n'):
             if response_line.startswith('TAG='):
                 tag_list.append(Tag(response_line.replace('TAG=', '')))
+        print 'time: ', time.time() - start
         return tag_list
 
     def get_tags_with_epc_data(self, print_response=False):
@@ -120,11 +123,36 @@ class ThinkifyReader(object):
 
     def get_closest_tag(self):
         " Return the closest Tag instance. "
+        start = time.time()
         tag_list = self.get_tags_with_epc_data()
+        closest_tag = None
         if len(tag_list) >= 1:
             tag_list.sort(key=lambda x: x.signal_strength, reverse=True)
-            return tag_list[0]
-        return None
+            closest_tag = tag_list[0]
+        print 'time: ', time.time() - start
+        return closest_tag
+
+    def get_most_recent_tag_indefinitely(self):
+        """
+        Return the last properly formatted tag after issuing a `t6` command.
+        The `t6` command sets the reader to loop indefinitely and streams
+        tag data (as soon as it is found) back to the serial port.
+
+        This function listens for valid tag data and returns a Tag instance
+        given the most recent (valid) Tag ID.
+        """
+        self._issue_command('t6')
+        while True:
+            data = self.serial.read(self.serial.inWaiting())
+            # print 'data', data, len(data), time.time()
+            if len(data) > len(self.tag_id_prefix) + 10:
+                try:
+                    epc_id = data.split('TAG=')[1].split(' ')[0]
+                    self._issue_command(' \r')
+                    self.serial.flushInput()
+                    return Tag(epc_id, id_prefix=self.tag_id_prefix)
+                except IndexError:
+                    print 'IndexError', data
 
     # AMPLIFIER (ANTENNA) METHODS ############################################
     # Used to set and get the parameters tha control the characteristics of
