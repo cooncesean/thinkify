@@ -145,7 +145,7 @@ class ThinkifyReader(object):
         while True:
             data = self.serial.read(self.serial.inWaiting())
             # print 'data', data, len(data), time.time()
-            if len(data) > len(self.tag_id_prefix) + 10:
+            if self.tag_id_prefix and data and len(data) > len(self.tag_id_prefix) + 10:
                 try:
                     epc_id = data.split('TAG=')[1].split(' ')[0]
                     self._issue_command(' \r')

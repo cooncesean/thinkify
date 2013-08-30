@@ -1,3 +1,5 @@
+* 0.2.0
+    * Patching a read bug.
 * 0.1.9
     * Adding a new ThinkifyReader method `get_most_recent_tag_indefinitely`
       which utilizes the API's `T6` command and loops indefinitely until a
