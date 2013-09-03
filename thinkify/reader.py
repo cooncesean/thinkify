@@ -129,7 +129,7 @@ class ThinkifyReader(object):
         if len(tag_list) >= 1:
             tag_list.sort(key=lambda x: x.signal_strength, reverse=True)
             closest_tag = tag_list[0]
-        print 'time: ', time.time() - start
+        # print 'time: ', time.time() - start
         return closest_tag
 
     def get_most_recent_tag_indefinitely(self):
@@ -144,15 +144,23 @@ class ThinkifyReader(object):
         self._issue_command('t6')
         while True:
             data = self.serial.read(self.serial.inWaiting())
-            # print 'data', data, len(data), time.time()
-            if self.tag_id_prefix and data and len(data) > len(self.tag_id_prefix) + 10:
+            if data:
+                init_kwargs = {}
+                if self.tag_id_prefix:
+                    init_kwargs.update({'id_prefix': self.tag_id_prefix})
+
+                print 'init_kwargs', init_kwargs
+                # Try to initialize and return a valid Tag object w/ the epc_id read
                 try:
                     epc_id = data.split('TAG=')[1].split(' ')[0]
                     self._issue_command(' \r')
                     self.serial.flushInput()
-                    return Tag(epc_id, id_prefix=self.tag_id_prefix)
+                    return Tag(epc_id, **init_kwargs)
                 except IndexError:
                     print 'IndexError', data
+                    self._issue_command(' \r')
+                    self.serial.flushInput()
+                    return None
 
     # AMPLIFIER (ANTENNA) METHODS ############################################
     # Used to set and get the parameters tha control the characteristics of

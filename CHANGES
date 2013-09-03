@@ -1,3 +1,7 @@
+* 0.2.1
+    * Patching logic in `get_most_recent_tag_indefinitely()` in which an IO
+    leak was possibly causing an error in reading new tags as identified in
+    this email: https://gist.github.com/cooncesean/6430126.
 * 0.2.0
     * Patching a read bug.
 * 0.1.9
