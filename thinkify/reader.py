@@ -49,18 +49,27 @@ class ThinkifyReader(object):
         " Trim response cruft. "
         return response.replace('\r\n\r\nREADY>', '')
 
-    def _issue_command(self, command):
+    def _issue_command(self, command, milliseconds_to_wait=100.0):
         """
         Util method to issue any command passed to the method to the reader.
         This method is used by a number of public methods on the class and
         may be used issue whatever you'd like to the reader given the
         documentation here: http://bit.ly/1dKFJ5x
+
+        @command (str) => The command you wish the reader to run.
+
+        @milliseconds_to_wait (int) => An optional length of time to wait for
+        a round trip response. Useful if issuing a command that takes more than
+        100 milliseconds to run. If running a `t` command (which runs its own
+        internal loop [SELECT/QUERY/ACK/REQRN/ACK/XREAD/XWRITE]) over a long
+        serial connection (>12ft), it might make sense to increase the wait in
+        order to receive a valid response from the reader.
         """
         # Issue the read command to the device
         self.serial.write('%s\r' % command)
 
         # Need to wait for just a bit to get a round trip response
-        time.sleep(.1)
+        time.sleep(float(milliseconds_to_wait) / 1000.0)
 
         # Read and format the response from the device
         response = self.serial.read(self.serial.inWaiting())
@@ -75,14 +84,13 @@ class ThinkifyReader(object):
     # These methods attempt to read tags using the current settings on the
     # device.
     ##########################################################################
-    def get_tags(self, print_response=False):
+    def get_tags(self, print_response=False, milliseconds_to_wait=100.0):
         """
         Runs a single `ping` checking for any and all tags within the reader's
         read current range and returns a list of `Tag` objects with their
         respective epc_ids (tag ids).
         """
-        start = time.time()
-        response = self._issue_command('t')
+        response = self._issue_command('t', milliseconds_to_wait)
         response = self._format_response(response)
         if print_response:
             print response
@@ -92,7 +100,6 @@ class ThinkifyReader(object):
         for response_line in response.split('\r\n'):
             if response_line.startswith('TAG='):
                 tag_list.append(Tag(response_line.replace('TAG=', '')))
-        print 'time: ', time.time() - start
         return tag_list
 
     def get_tags_with_epc_data(self, print_response=False):
@@ -149,7 +156,6 @@ class ThinkifyReader(object):
                 if self.tag_id_prefix:
                     init_kwargs.update({'id_prefix': self.tag_id_prefix})
 
-                print 'init_kwargs', init_kwargs
                 # Try to initialize and return a valid Tag object w/ the epc_id read
                 try:
                     epc_id = data.split('TAG=')[1].split(' ')[0]
@@ -221,4 +227,14 @@ class ThinkifyReader(object):
     def get_inventory_settings(self):
         " Return the current inventory settings on the device. "
         response = self._issue_command('i')
+        return self._format_response(response)
+
+    def reset_factory_settings(self):
+        " Return the device to default factory settings. "
+        response = self._issue_command('brs')
+        return self._format_response(response)
+
+    def set_loop_delay(self, milliseconds):
+        " This sets a loop delay for each tX command. "
+        self._issue_command('ip%d' % milliseconds)
         return self._format_response(response)

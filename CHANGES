@@ -1,3 +1,9 @@
+* 0.2.2
+    * Adding an optional extra param to `_issue_command()` called
+    `milliseconds_to_wait` which allows the user to specify the sleep period
+    before a response is requested from the input buffer. This can be helpful
+    for commands that take longer than .1 seconds (`t` commands) which operate
+    over a longer serial connection (say, longer than 12 ft).
 * 0.2.1
     * Patching logic in `get_most_recent_tag_indefinitely()` in which an IO
     leak was possibly causing an error in reading new tags as identified in
