@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='thinkify',
     description='A Python wrapper for the Thinkify Reader Protocol.',
-    version='0.2.2',
+    version='0.2.3',
     author='Sean Coonce',
     author_email='cooncesean@gmail.com',
     packages=['thinkify',],

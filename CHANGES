@@ -1,3 +1,8 @@
+* 0.2.3
+    * Modified `_issue_command()` logic to essentially "block" the reader
+    from receiving and issuing more than 1 command at a time. The workflow is
+    now: 1. Issue Command. 2. Block 3. Read until terminiation string from
+    reader has been issued. 4. Unblock 5. Return response.
 * 0.2.2
     * Adding an optional extra param to `_issue_command()` called
     `milliseconds_to_wait` which allows the user to specify the sleep period

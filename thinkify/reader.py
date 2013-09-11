@@ -42,14 +42,22 @@ class ThinkifyReader(object):
         self.port = port
         self.baudrate = baudrate
         self.tag_id_prefix = tag_id_prefix
+
+        # `blocked` is a flag set to True after issuing a command to the reader
+        # and waiting for the response termination string
+        self.blocked = False
+        self.response_terminator = "\nREADY>"
+
+        # Connect to the reader and flush IO input and output
         self.serial = serial.Serial(port, baudrate)
         self.serial.flushInput()
+        self.serial.flushOutput()
 
     def _format_response(self, response):
         " Trim response cruft. "
         return response.replace('\r\n\r\nREADY>', '')
 
-    def _issue_command(self, command, milliseconds_to_wait=100.0):
+    def _issue_command(self, command):
         """
         Util method to issue any command passed to the method to the reader.
         This method is used by a number of public methods on the class and
@@ -57,23 +65,28 @@ class ThinkifyReader(object):
         documentation here: http://bit.ly/1dKFJ5x
 
         @command (str) => The command you wish the reader to run.
-
-        @milliseconds_to_wait (int) => An optional length of time to wait for
-        a round trip response. Useful if issuing a command that takes more than
-        100 milliseconds to run. If running a `t` command (which runs its own
-        internal loop [SELECT/QUERY/ACK/REQRN/ACK/XREAD/XWRITE]) over a long
-        serial connection (>12ft), it might make sense to increase the wait in
-        order to receive a valid response from the reader.
         """
-        # Issue the read command to the device
+        # Do not issue a command to a reader that is in the middle of returning
+        # a response
+        if self.blocked:
+            print 'Command not executed - reader is blocked.'
+            return None
+
+        # Issue the command to the device and block it from further commands
+        # until the full response message has been received.
+        self.blocked = True
         self.serial.write('%s\r' % command)
 
-        # Need to wait for just a bit to get a round trip response
-        time.sleep(float(milliseconds_to_wait) / 1000.0)
+        # Read the response input from the reader until we receive the message
+        # terminator string `\nREADY>`
+        response_buffer = ""
+        while self.response_terminator not in response_buffer:
+            response_buffer += str(self.serial.read(self.serial.inWaiting()))
+            time.sleep(.05)
 
-        # Read and format the response from the device
-        response = self.serial.read(self.serial.inWaiting())
-        return response
+        # Unblock instance (allow it to issue commands) and return the response
+        self.blocked = False
+        return response_buffer
 
     def get_version(self):
         " Returns the firmware version on the device. "
@@ -84,13 +97,13 @@ class ThinkifyReader(object):
     # These methods attempt to read tags using the current settings on the
     # device.
     ##########################################################################
-    def get_tags(self, print_response=False, milliseconds_to_wait=100.0):
+    def get_tags(self, print_response=False):
         """
         Runs a single `ping` checking for any and all tags within the reader's
         read current range and returns a list of `Tag` objects with their
         respective epc_ids (tag ids).
         """
-        response = self._issue_command('t', milliseconds_to_wait)
+        response = self._issue_command('t')
         response = self._format_response(response)
         if print_response:
             print response
