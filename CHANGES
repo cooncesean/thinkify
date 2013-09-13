@@ -1,3 +1,5 @@
+* 0.2.5
+    * Patching attr error.
 * 0.2.4
     * Modified `_issue_command()` to close and flush and re-open its serial
     connection if more than X read requests come back w/out data.

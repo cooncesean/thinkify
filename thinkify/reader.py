@@ -63,7 +63,7 @@ class ThinkifyReader(object):
         return response.replace('\r\n\r\nREADY>', '')
 
     def _wait(self):
-        time.sleep(float(self.milliseconds) / 1000.0)
+        time.sleep(float(self.sleep_milliseconds) / 1000.0)
 
     def _issue_command(self, command):
         """
