@@ -1,4 +1,6 @@
-* 0.2.6
+* 0.2.8
+    * _issue_command() always returns a string.
+* 0.2.7
     * Removing debug output.
 * 0.2.6
     * Monkeypatching (and using) Pyserial's `write()` method to send the

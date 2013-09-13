@@ -77,13 +77,13 @@ class ThinkifyReader(object):
         # a response
         if self.blocked:
             print 'Command not executed - reader is blocked.'
-            return None
+            return ''
 
         # Issue the command to the device and block it from further commands
         # until the full response message has been received.
         if not self.serial.getCTS():
             print 'Not clear to send'
-            return
+            return ''
 
         self.serial.setRTS(1)
         self.blocked = True
@@ -111,7 +111,7 @@ class ThinkifyReader(object):
                 self.serial.monkeypatch_write('\r')
                 self.blocked = False
                 print self.serial.read(self.serial.inWaiting())
-                return
+                return ''
 
         # Unblock instance (allow it to issue commands) and return the response
         self.blocked = False
@@ -132,10 +132,8 @@ class ThinkifyReader(object):
         read current range and returns a list of `Tag` objects with their
         respective epc_ids (tag ids).
         """
-        # Set read mode to collect non-epc data
-        self._issue_command('ix0')
         response = self._issue_command('t')
-        # response = self._format_response(response)
+        response = self._format_response(response)
         if print_response:
             print response
 
