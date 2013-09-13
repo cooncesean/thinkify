@@ -56,7 +56,6 @@ class ThinkifyReader(object):
         self.serial = serial.Serial(port, baudrate, rtscts=True)
         self.serial.flushInput()
         self.serial.flushOutput()
-        self._issue_command('ix0') # Set read mode to collect non-epc data
 
     def _format_response(self, response):
         " Trim response cruft. "
@@ -88,7 +87,7 @@ class ThinkifyReader(object):
 
         self.serial.setRTS(1)
         self.blocked = True
-        self.serial.write('%s\r' % command)
+        self.serial.monkeypatch_write('%s\r' % command)
         self._wait()
 
         # Read the response input from the reader until we receive the message
@@ -109,7 +108,7 @@ class ThinkifyReader(object):
                 self.serial.close()
                 self._wait()
                 self.serial.open()
-                self.serial.write(' \r')
+                self.serial.monkeypatch_write('\r')
                 self.blocked = False
                 print self.serial.read(self.serial.inWaiting())
                 return
@@ -133,8 +132,10 @@ class ThinkifyReader(object):
         read current range and returns a list of `Tag` objects with their
         respective epc_ids (tag ids).
         """
+        # Set read mode to collect non-epc data
+        self._issue_command('ix0')
         response = self._issue_command('t')
-        response = self._format_response(response)
+        # response = self._format_response(response)
         if print_response:
             print response
 
@@ -281,3 +282,17 @@ class ThinkifyReader(object):
         " This sets a loop delay for each tX command. "
         response = self._issue_command('ip%d' % milliseconds)
         return response
+
+def monkeypatch_method(cls):
+    def decorator(func):
+        setattr(cls, func.__name__, func)
+        return func
+    return decorator
+
+@monkeypatch_method(serial.Serial)
+def monkeypatch_write(self, data):
+    " Monkeypatch pyserial's `write()` method to send complete strings to the reader (not partial characters). "
+    import os
+    print 'MONKEY WRITING', data
+    os.write(self.fd, data)
+    return len(data)
