@@ -19,7 +19,7 @@ class ThinkifyReader(object):
         <epc_id_2>
         ....
     """
-    def __init__(self, port, baudrate=115200, tag_id_prefix=None):
+    def __init__(self, port, baudrate=115200, tag_id_prefix=None, sleep_milliseconds=300):
         """
         Initalizes an connection to a connected (via USB) ThinkifyReader
         TR-200 and abstracts common commands to get and set data to/from the
@@ -38,10 +38,14 @@ class ThinkifyReader(object):
             It allows the developer to parse the `epc_id` when  instantiating
             new `Tag` objects and provides access to the truncated Tag id using
             the `Tag.trunc_id` property.
+
+            @sleep_milliseconds (int) => Optional sleep in milliseconds between
+            issuing a command to the reader and requesting a response.
         """
         self.port = port
         self.baudrate = baudrate
         self.tag_id_prefix = tag_id_prefix
+        self.sleep_milliseconds = sleep_milliseconds
 
         # `blocked` is a flag set to True after issuing a command to the reader
         # and waiting for the response termination string
@@ -49,13 +53,17 @@ class ThinkifyReader(object):
         self.response_terminator = "\nREADY>"
 
         # Connect to the reader and flush IO input and output
-        self.serial = serial.Serial(port, baudrate)
+        self.serial = serial.Serial(port, baudrate, rtscts=True)
         self.serial.flushInput()
         self.serial.flushOutput()
+        self._issue_command('ix0') # Set read mode to collect non-epc data
 
     def _format_response(self, response):
         " Trim response cruft. "
         return response.replace('\r\n\r\nREADY>', '')
+
+    def _wait(self):
+        time.sleep(float(self.milliseconds) / 1000.0)
 
     def _issue_command(self, command):
         """
@@ -74,15 +82,37 @@ class ThinkifyReader(object):
 
         # Issue the command to the device and block it from further commands
         # until the full response message has been received.
+        if not self.serial.getCTS():
+            print 'Not clear to send'
+            return
+
+        self.serial.setRTS(1)
         self.blocked = True
         self.serial.write('%s\r' % command)
+        self._wait()
 
         # Read the response input from the reader until we receive the message
         # terminator string `\nREADY>`
+        buffer_requests = 0
         response_buffer = ""
         while self.response_terminator not in response_buffer:
             response_buffer += str(self.serial.read(self.serial.inWaiting()))
-            time.sleep(.05)
+            print 'response_buffer'
+            print response_buffer
+            self._wait()
+
+            # Close the serial open and obtain a fresh connection if too many
+            # read requests fail
+            buffer_requests += 1
+            if buffer_requests > 4:
+                print 'BAILING...'
+                self.serial.close()
+                self._wait()
+                self.serial.open()
+                self.serial.write(' \r')
+                self.blocked = False
+                print self.serial.read(self.serial.inWaiting())
+                return
 
         # Unblock instance (allow it to issue commands) and return the response
         self.blocked = False
@@ -240,14 +270,14 @@ class ThinkifyReader(object):
     def get_inventory_settings(self):
         " Return the current inventory settings on the device. "
         response = self._issue_command('i')
-        return self._format_response(response)
+        return response
 
     def reset_factory_settings(self):
         " Return the device to default factory settings. "
         response = self._issue_command('brs')
-        return self._format_response(response)
+        return response
 
     def set_loop_delay(self, milliseconds):
         " This sets a loop delay for each tX command. "
-        self._issue_command('ip%d' % milliseconds)
-        return self._format_response(response)
+        response = self._issue_command('ip%d' % milliseconds)
+        return response

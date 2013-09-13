@@ -1,3 +1,9 @@
+* 0.2.4
+    * Modified `_issue_command()` to close and flush and re-open its serial
+    connection if more than X read requests come back w/out data.
+    * Adding an optional arg `sleep_milliseconds` to __init__() that provides
+    more control over the wait time between issuing commands and requesting
+    responses.
 * 0.2.3
     * Modified `_issue_command()` logic to essentially "block" the reader
     from receiving and issuing more than 1 command at a time. The workflow is
