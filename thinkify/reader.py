@@ -293,6 +293,5 @@ def monkeypatch_method(cls):
 def monkeypatch_write(self, data):
     " Monkeypatch pyserial's `write()` method to send complete strings to the reader (not partial characters). "
     import os
-    print 'MONKEY WRITING', data
     os.write(self.fd, data)
     return len(data)

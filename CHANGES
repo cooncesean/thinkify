@@ -1,4 +1,6 @@
 * 0.2.6
+    * Removing debug output.
+* 0.2.6
     * Monkeypatching (and using) Pyserial's `write()` method to send the
     entire string to the reader at once instead of one character at a
     time.
